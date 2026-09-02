@@ -57,15 +57,12 @@
   .v{display:block; font-size:17px; color:var(--ink); overflow-wrap:anywhere; line-height:1.3}
   .k{display:block; font-size:13px; color:var(--muted); margin-top:2px}
 
-  .btn{margin-top:22px; display:flex; align-items:center; justify-content:center; gap:10px; background:var(--brand); color:var(--on-brand); padding:16px 20px; border-radius:12px; font-size:16px; font-weight:500; min-height:52px; transition:background var(--fast) var(--ease)}
+  .actions{margin-top:24px; display:grid; grid-template-columns:1fr 52px; gap:10px; align-items:stretch}
+  .btn{display:flex; align-items:center; justify-content:center; gap:10px; background:var(--brand); color:var(--on-brand); padding:16px 20px; border-radius:12px; font-size:16px; font-weight:500; min-height:52px; transition:background var(--fast) var(--ease)}
   .btn:hover{background:var(--brand-hover)}
-
-  .foot{margin-top:24px; padding-top:22px; border-top:1px solid var(--rule); display:grid; grid-template-columns:100px 1fr 48px; gap:16px; align-items:center}
-  .qr{width:100px; height:100px; padding:7px; background:#fff; border:1px solid var(--rule); border-radius:10px}
-  .qr svg{display:block; width:100%; height:100%}
-  .scan{font-family:var(--mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); line-height:1.6}
-  .share{width:48px; height:48px; border-radius:50%; border:1px solid var(--rule); background:transparent; color:var(--brand); display:grid; place-items:center; cursor:pointer; transition:background var(--fast) var(--ease)}
+  .share{width:52px; min-height:52px; border-radius:12px; border:1px solid var(--brand); background:transparent; color:var(--brand); display:grid; place-items:center; cursor:pointer; transition:background var(--fast) var(--ease)}
   .share:hover{background:var(--page)}
+  .note{margin-top:12px; font-size:13px; color:var(--muted); text-align:center; line-height:1.5}
 
   .tag{margin-top:26px; font-size:12px; color:var(--muted); text-align:center}
   @media (prefers-reduced-motion: reduce){ *{transition:none !important} }
@@ -91,13 +88,11 @@
 <li><a class="row" href="mailto:jlevant@dnrealtycorp.com"><span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7.5 9 6 9-6"/></svg></span><span class="txt"><span class="v">jlevant@dnrealtycorp.com</span><span class="k">Work</span></span></a></li>
 <li><a class="row" href="https://maps.google.com/?q=5180+Roswell+Rd+NE,+Suite+203,+Atlanta,+GA+30342" target="_blank" rel="noopener"><span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><span class="txt"><span class="v">5180 Roswell Rd NE, Suite 203<br>Atlanta, GA 30342</span><span class="k">Office</span></span></a></li>
     </ul>
-    <a class="btn" href="jennifer-levant.vcf" download="jennifer-levant.vcf"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M3 20a6 6 0 0 1 12 0M18 8v6M15 11h6"/></svg>Save contact</a>
-    <div class="foot">
-      <div class="qr"><svg role="img" aria-label="QR code for this card" viewBox="0 0 37 37" width="100%" height="100%" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg"><path stroke="#413c7c" d="M0 0.5h7m1 0h1m2 0h2m1 0h1m1 0h2m1 0h1m1 0h1m1 0h1m1 0h1m1 0h2m1 0h7m-37 1h1m5 0h1m3 0h5m1 0h1m5 0h2m2 0h3m1 0h1m5 0h1m-37 1h1m1 0h3m1 0h1m1 0h3m1 0h1m1 0h1m3 0h1m3 0h1m3 0h1m1 0h1m1 0h1m1 0h3m1 0h1m-37 1h1m1 0h3m1 0h1m1 0h3m1 0h4m2 0h3m1 0h1m1 0h1m1 0h2m2 0h1m1 0h3m1 0h1m-37 1h1m1 0h3m1 0h1m4 0h1m1 0h1m5 0h1m3 0h1m2 0h2m2 0h1m1 0h3m1 0h1m-37 1h1m5 0h1m1 0h2m2 0h1m3 0h1m1 0h1m1 0h3m2 0h1m1 0h2m1 0h1m5 0h1m-37 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-29 1h1m1 0h2m3 0h1m4 0h5m-24 1h1m1 0h1m1 0h4m1 0h2m4 0h2m1 0h1m1 0h1m1 0h1m1 0h7m1 0h2m1 0h1m-35 1h3m2 0h4m4 0h2m1 0h1m1 0h2m2 0h1m3 0h3m3 0h3m-36 1h3m1 0h3m2 0h1m1 0h1m2 0h1m4 0h2m6 0h1m1 0h2m2 0h1m1 0h1m-37 1h1m1 0h1m1 0h1m3 0h1m3 0h2m2 0h2m1 0h4m2 0h1m1 0h2m3 0h1m3 0h1m-36 1h6m3 0h5m1 0h1m1 0h1m1 0h6m1 0h4m5 0h1m-37 1h3m4 0h1m2 0h2m1 0h1m3 0h1m2 0h3m1 0h1m3 0h1m1 0h1m2 0h1m2 0h1m-37 1h1m2 0h1m1 0h2m3 0h2m6 0h1m1 0h1m2 0h1m1 0h2m1 0h1m1 0h3m1 0h1m1 0h1m-36 1h2m1 0h2m2 0h1m5 0h3m4 0h1m1 0h3m2 0h2m2 0h1m2 0h1m-32 1h6m1 0h1m1 0h3m5 0h1m2 0h1m1 0h5m2 0h4m-37 1h2m2 0h2m1 0h1m1 0h1m2 0h1m1 0h1m1 0h1m3 0h2m1 0h4m3 0h1m1 0h2m2 0h1m-35 1h1m1 0h4m1 0h1m1 0h2m2 0h1m1 0h3m2 0h1m2 0h2m2 0h1m1 0h2m2 0h2m-36 1h1m1 0h2m2 0h1m1 0h1m4 0h1m2 0h1m1 0h1m1 0h1m1 0h1m2 0h3m1 0h3m1 0h1m1 0h1m-37 1h1m2 0h2m1 0h1m1 0h1m2 0h3m1 0h1m1 0h2m1 0h2m1 0h6m1 0h3m2 0h1m-34 1h1m7 0h1m4 0h1m2 0h3m3 0h2m3 0h2m3 0h3m-37 1h3m2 0h2m1 0h1m3 0h1m2 0h1m2 0h2m4 0h2m3 0h4m1 0h3m-36 1h1m3 0h1m1 0h2m1 0h1m1 0h1m4 0h1m1 0h1m1 0h1m1 0h1m1 0h1m3 0h1m2 0h1m2 0h1m-34 1h1m2 0h2m1 0h1m3 0h1m1 0h1m1 0h2m1 0h1m1 0h1m2 0h2m1 0h4m4 0h2m-36 1h5m5 0h3m2 0h2m2 0h1m3 0h1m1 0h1m1 0h1m1 0h2m3 0h2m-37 1h1m1 0h2m2 0h2m1 0h2m2 0h5m3 0h1m1 0h1m4 0h4m4 0h1m-36 1h3m4 0h1m1 0h1m2 0h1m3 0h1m2 0h3m1 0h3m3 0h3m-33 1h3m2 0h4m1 0h1m3 0h1m1 0h1m1 0h1m1 0h3m1 0h1m3 0h5m1 0h3m-29 1h1m1 0h2m1 0h2m2 0h3m3 0h2m1 0h3m3 0h1m3 0h1m-37 1h7m1 0h3m4 0h4m1 0h2m2 0h2m1 0h2m1 0h1m1 0h1m1 0h3m-37 1h1m5 0h1m1 0h3m3 0h3m3 0h2m1 0h2m3 0h1m3 0h1m1 0h3m-37 1h1m1 0h3m1 0h1m2 0h1m3 0h1m1 0h3m4 0h1m1 0h3m1 0h6m-34 1h1m1 0h3m1 0h1m1 0h2m1 0h1m1 0h2m1 0h4m4 0h2m1 0h1m1 0h1m1 0h2m1 0h1m1 0h1m-37 1h1m1 0h3m1 0h1m2 0h3m4 0h1m1 0h4m2 0h4m1 0h1m2 0h3m1 0h1m-37 1h1m5 0h1m1 0h1m1 0h1m3 0h1m1 0h1m2 0h3m1 0h3m2 0h1m3 0h1m-33 1h7m3 0h2m1 0h1m6 0h2m3 0h1m1 0h4m4 0h2"/></svg>
-</div>
-      <p class="scan" id="scan">Scan to open<br>this card</p>
+    <div class="actions">
+      <a class="btn" href="jennifer-levant.vcf" download="jennifer-levant.vcf"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M3 20a6 6 0 0 1 12 0M18 8v6M15 11h6"/></svg>Save contact</a>
       <button class="share" id="share" type="button" aria-label="Share this card"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="m8.2 10.8 7.6-4.6M8.2 13.2l7.6 4.6"/></svg></button>
     </div>
+    <p class="note" id="scan">Saves name, email, office address and photo to your contacts.</p>
     
   </section>
 </main>

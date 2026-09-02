@@ -256,15 +256,12 @@ TEMPLATE = """<!DOCTYPE html>
   .v{display:block; font-size:17px; color:var(--ink); overflow-wrap:anywhere; line-height:1.3}
   .k{display:block; font-size:13px; color:var(--muted); margin-top:2px}
 
-  .btn{margin-top:22px; display:flex; align-items:center; justify-content:center; gap:10px; background:var(--brand); color:var(--on-brand); padding:16px 20px; border-radius:12px; font-size:16px; font-weight:500; min-height:52px; transition:background var(--fast) var(--ease)}
+  .actions{margin-top:24px; display:grid; grid-template-columns:1fr 52px; gap:10px; align-items:stretch}
+  .btn{display:flex; align-items:center; justify-content:center; gap:10px; background:var(--brand); color:var(--on-brand); padding:16px 20px; border-radius:12px; font-size:16px; font-weight:500; min-height:52px; transition:background var(--fast) var(--ease)}
   .btn:hover{background:var(--brand-hover)}
-
-  .foot{margin-top:24px; padding-top:22px; border-top:1px solid var(--rule); display:grid; grid-template-columns:100px 1fr 48px; gap:16px; align-items:center}
-  .qr{width:100px; height:100px; padding:7px; background:#fff; border:1px solid var(--rule); border-radius:10px}
-  .qr svg{display:block; width:100%; height:100%}
-  .scan{font-family:var(--mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); line-height:1.6}
-  .share{width:48px; height:48px; border-radius:50%; border:1px solid var(--rule); background:transparent; color:var(--brand); display:grid; place-items:center; cursor:pointer; transition:background var(--fast) var(--ease)}
+  .share{width:52px; min-height:52px; border-radius:12px; border:1px solid var(--brand); background:transparent; color:var(--brand); display:grid; place-items:center; cursor:pointer; transition:background var(--fast) var(--ease)}
   .share:hover{background:var(--page)}
+  .note{margin-top:12px; font-size:13px; color:var(--muted); text-align:center; line-height:1.5}
 
   .tag{margin-top:26px; font-size:12px; color:var(--muted); text-align:center}
   @media (prefers-reduced-motion: reduce){ *{transition:none !important} }
@@ -283,12 +280,11 @@ TEMPLATE = """<!DOCTYPE html>
     <ul class="rows">
 {{ROWS}}
     </ul>
-    <a class="btn" href="{{VCF}}" download="{{VCF}}">{{ICON_SAVE}}Save contact</a>
-    <div class="foot">
-      <div class="qr">{{QR}}</div>
-      <p class="scan" id="scan">Scan to open<br>this card</p>
+    <div class="actions">
+      <a class="btn" href="{{VCF}}" download="{{VCF}}">{{ICON_SAVE}}Save contact</a>
       <button class="share" id="share" type="button" aria-label="Share this card">{{ICON_SHARE}}</button>
     </div>
+    <p class="note" id="scan">Saves name, {{SAVES}} to your contacts.</p>
     {{TAGLINE}}
   </section>
 </main>
@@ -351,6 +347,14 @@ def hero_html(p: dict, name: str, brand: dict) -> str:
     return '<div class="fallback"><svg viewBox="0 0 562.24 226.47" aria-hidden="true"><path fill="#FAF5EF" d="M67.68 113.24 L113.24 0 L0 113.24 Z"/><path fill="#B8B9DE" d="M67.68 113.24 L113.24 226.47 L0 113.24 Z"/><g fill="#FAF5EF">{{WORDMARK}}</g></svg></div>'
 
 
+def saves_text(p: dict, has_photo: bool) -> str:
+    """'phone, email and photo' — what the vCard actually carries."""
+    items = [s for s, ok in (("phone", p.get("phone_e164")), ("email", True), ("LinkedIn", p.get("linkedin")),
+                             ("website", p.get("website")), ("office address", p.get("address")),
+                             ("photo", has_photo)) if ok]
+    return ", ".join(items[:-1]) + " and " + items[-1] if len(items) > 1 else items[0]
+
+
 def build_person(p: dict) -> dict:
     slug = p["slug"]
     url = f"{BASE}/{slug}/"
@@ -381,6 +385,7 @@ def build_person(p: dict) -> dict:
         .replace("{{VCF}}", esc(vcf_name))
         .replace("{{ROWS}}", rows_html(p))
         .replace("{{QR}}", qr_svg)
+        .replace("{{SAVES}}", saves_text(p, has_photo))
         .replace("{{ICON_SAVE}}", icon("user-plus", 20))
         .replace("{{ICON_SHARE}}", icon("share", 20))
         .replace("{{TAGLINE}}", f'<p class="tag">{esc(p["tagline"])}</p>' if p.get("tagline") else "")
