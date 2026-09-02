@@ -85,12 +85,12 @@
       <p class="org">Crystal · Diamond National Realty</p>
     </div>
     <ul class="rows">
-<li><a class="row" href="mailto:jlevant@dnrealtycorp.com"><span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7.5 9 6 9-6"/></svg></span><span class="txt"><span class="v">jlevant@dnrealtycorp.com</span><span class="k">Work</span></span></a></li>
+<li><a class="row" href="mailto:jlevant@dnrealtycorp.com"><span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></span><span class="txt"><span class="v">jlevant@dnrealtycorp.com</span><span class="k">Work</span></span></a></li>
 <li><a class="row" href="https://maps.google.com/?q=5180+Roswell+Rd+NE,+Suite+203,+Atlanta,+GA+30342" target="_blank" rel="noopener"><span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><span class="txt"><span class="v">5180 Roswell Rd NE, Suite 203<br>Atlanta, GA 30342</span><span class="k">Office</span></span></a></li>
     </ul>
     <div class="actions">
-      <a class="btn" href="jennifer-levant.vcf" download="jennifer-levant.vcf"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M3 20a6 6 0 0 1 12 0M18 8v6M15 11h6"/></svg>Save contact</a>
-      <button class="share" id="share" type="button" aria-label="Share this card"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="m8.2 10.8 7.6-4.6M8.2 13.2l7.6 4.6"/></svg></button>
+      <a class="btn" href="jennifer-levant.vcf" download="jennifer-levant.vcf"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg>Save contact</a>
+      <button class="share" id="share" type="button" aria-label="Share this card"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4"/><path d="M15.4 6.5l-6.8 4"/></svg></button>
     </div>
     <p class="note" id="scan">Saves name, email, office address and photo to your contacts.</p>
     
@@ -99,7 +99,7 @@
 <script>(function(){
   var b=document.getElementById('share'), note=document.getElementById('scan'); if(!b) return;
   var url=location.href.split('#')[0], title=document.title, orig=note?note.innerHTML:'';
-  function done(){ if(!note) return; note.textContent='Link copied'; setTimeout(function(){ note.innerHTML=orig; },2200); }
+  function done(){ if(!note) return; note.textContent='Link copied'; note.classList.add('on'); setTimeout(function(){ note.innerHTML=orig; note.classList.remove('on'); },2200); }
   b.addEventListener('click', function(){
     if(navigator.share){ navigator.share({title:title,url:url}).catch(function(){}); return; }
     if(navigator.clipboard){ navigator.clipboard.writeText(url).then(done, function(){ prompt('Copy this link', url); }); }
