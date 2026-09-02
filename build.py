@@ -445,7 +445,7 @@ MONO = {
     "dni": {  # 1b DNI variant (Business Card.dc.html)
         "bg": "#0E1014", "tile": "#161A20", "tile_border": "#262B33", "rule": "#1E232B", "text": "#F8F3F0",
         "accent": "#8CA5BD", "eyebrow": "#8CA5BD", "save_border": "#8CA5BD", "save_text": "#8CA5BD",
-        "save_hover": "rgba(140,165,189,.14)", "logo": "assets/dni-lockup-light.png", "logo_h": 32, "logo_foot_h": 56,
+        "save_hover": "rgba(140,165,189,.14)", "logo": "assets/dni-lockup-sand.png", "logo_h": 32, "logo_foot_h": 56,
         "shade": "linear-gradient(180deg, rgba(14,16,20,.5) 0%, rgba(14,16,20,0) 28%, rgba(14,16,20,.3) 62%, rgba(14,16,20,.55) 82%, rgba(14,16,20,.35) 100%)",
     },
     "dnr": {  # 1b Crystal/DNR variant (Ailin, Jennifer, and Mehr's second variant)
@@ -489,8 +489,8 @@ MONO_TEMPLATE = """<!DOCTYPE html>
   .hero .shade{position:absolute; inset:0; background:{{SHADE}}}
   .hero .logo{position:absolute; left:26px; top:calc(26px + env(safe-area-inset-top)); height:{{LOGO_H}}px; width:auto}
   .hero .cap{position:absolute; left:26px; right:26px; bottom:22px}
-  .eyebrow{display:block; font:500 10px/1.4 'DM Mono',monospace; letter-spacing:.2em; text-transform:uppercase; color:var(--eyebrow)}
-  .hero h1{margin-top:11px; font:300 34px/1.05 Manrope,sans-serif; letter-spacing:-.02em; color:#FFFFFF}
+  .eyebrow{display:block; font:500 12px/1.3 'DM Mono',monospace; letter-spacing:.18em; text-transform:uppercase; color:var(--eyebrow)}
+  .hero h1{margin-top:11px; font:300 40px/1.03 Manrope,sans-serif; letter-spacing:-.02em; color:#FFFFFF}
 
   .body{flex:1; padding:4px 26px calc(22px + env(safe-area-inset-bottom)); display:flex; flex-direction:column; gap:12px}
   .grid{margin:auto 0; display:grid; grid-template-columns:1fr 1fr; gap:10px}
@@ -517,7 +517,6 @@ MONO_TEMPLATE = """<!DOCTYPE html>
   <div class="hero">
     <img class="portrait" src="../{{HERO_SRC}}" alt="{{NAME}}" width="920" height="1150">
     <div class="shade"></div>
-    <img class="logo" src="../{{LOGO_SRC}}" alt="{{ORG}}">
     <div class="cap">
       <span class="eyebrow">{{TITLE}}</span>
       <h1>{{NAME}}</h1>
