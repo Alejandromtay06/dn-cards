@@ -14,7 +14,8 @@
       "phone_e164": "+50768227290",
       "phone_label": "Cell",
       "website": "dn-investments.com",
-      "address": null
+      "address": null,
+      "photo": null
     },
     {
       "slug": "jennifer-levant",
@@ -36,7 +37,8 @@
         "state": "GA",
         "zip": "30342",
         "country": "USA"
-      }
+      },
+      "photo": "assets/jennifer-levant.jpg"
     },
     {
       "slug": "ailin-gava",
@@ -58,7 +60,8 @@
         "state": "GA",
         "zip": "30342",
         "country": "USA"
-      }
+      },
+      "photo": "assets/ailin-gava.jpg"
     }
   ]
 }

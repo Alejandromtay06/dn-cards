@@ -57,6 +57,13 @@ def vcard(p: dict, url: str) -> str:
             f"ADR;TYPE=WORK:;;{v(a['street'])};{v(a['city'])};{v(a['state'])};{v(a['zip'])};{v(a['country'])}"
         )
     lines.append(f"URL;TYPE=PROFILE:{url}")
+    if p.get("photo"):
+        small = ROOT / p["photo"].replace(".jpg", "-vcf.jpg")
+        b64 = base64.b64encode(small.read_bytes()).decode("ascii")
+        line = "PHOTO;ENCODING=b;TYPE=JPEG:" + b64
+        # RFC 2425 folding: 75 octets per line, continuation lines start with a space
+        lines.append(line[:75])
+        lines.extend(" " + line[i:i + 74] for i in range(75, len(line), 74))
     if p.get("tagline"):
         lines.append(f"NOTE:{v(p['tagline'])}")
     lines.append("END:VCARD")
@@ -146,7 +153,7 @@ DNI_TEMPLATE = """<!DOCTYPE html>
 <meta property="og:title" content="{{NAME}} · {{ORG}}">
 <meta property="og:description" content="{{TITLE}} · {{ORG}}">
 <meta property="og:type" content="profile">
-<meta property="og:url" content="{{URL}}">
+<meta property="og:url" content="{{URL}}">{{OG_IMAGE}}
 <link rel="icon" href="../assets/dni-mark-light.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -181,6 +188,7 @@ DNI_TEMPLATE = """<!DOCTYPE html>
   .hero h1{font-family:var(--font-display); font-weight:700; font-variation-settings:"wdth" 125; font-size:40px; line-height:.98; letter-spacing:-.02em; color:var(--sand-light)}
   .hero .title{margin-top:18px; font-size:16px; line-height:1.4; color:var(--sand-light)}
   .hero .org{font-size:14px; color:var(--silk-light); margin-top:4px}
+  .hero .photo{display:block; width:128px; height:128px; object-fit:cover; margin-bottom:28px; outline:1px solid var(--rule-dark); outline-offset:-1px; position:relative; z-index:1}
   .hero .mark{position:absolute; right:-6px; bottom:-14px; width:132px; height:132px; fill:var(--sand-light); opacity:.07; pointer-events:none}
 
   .rows{list-style:none; border-bottom:1px solid var(--rule)}
@@ -222,7 +230,7 @@ DNI_TEMPLATE = """<!DOCTYPE html>
     <span class="idx">Contact card</span>
   </header>
 
-  <section class="hero">
+  <section class="hero">{{PHOTO}}
     <div class="eyebrow">Digital business card</div>
     <h1>{{FIRST}}<br>{{LAST}}</h1>
     <div class="title">{{TITLE}}</div>
@@ -272,7 +280,7 @@ CRYSTAL_TEMPLATE = """<!DOCTYPE html>
 <meta property="og:title" content="{{NAME}} · {{ORG}}">
 <meta property="og:description" content="{{TITLE}} · {{ORG}}">
 <meta property="og:type" content="profile">
-<meta property="og:url" content="{{URL}}">
+<meta property="og:url" content="{{URL}}">{{OG_IMAGE}}
 <link rel="icon" href="../assets/crystal-icon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -304,6 +312,7 @@ CRYSTAL_TEMPLATE = """<!DOCTYPE html>
   .hero h1{font-family:var(--sans); font-weight:500; font-size:34px; line-height:1.06; letter-spacing:-.02em; color:var(--alabaster)}
   .hero .title{margin-top:16px; font-size:16px; line-height:1.4; color:var(--alabaster)}
   .hero .org{font-size:14px; color:var(--periwinkle); margin-top:4px}
+  .hero .photo{display:block; width:128px; height:128px; object-fit:cover; margin-bottom:28px; outline:1px solid var(--rule-dark); outline-offset:-1px; position:relative; z-index:1}
   .hero .wm{position:absolute; left:58%; bottom:-22px; width:360px; height:auto; pointer-events:none}
   .hero .wm path{fill:var(--alabaster); fill-opacity:.07}
 
@@ -342,7 +351,7 @@ CRYSTAL_TEMPLATE = """<!DOCTYPE html>
     <span class="idx">Contact card</span>
   </header>
 
-  <section class="hero">
+  <section class="hero">{{PHOTO}}
     <div class="eyebrow">Digital business card</div>
     <h1>{{FIRST}}<br>{{LAST}}</h1>
     <div class="title">{{TITLE}}</div>
@@ -422,6 +431,18 @@ def wordmark_paths() -> str:
     return g.strip()
 
 
+def photo_html(p: dict, name: str) -> str:
+    if not p.get("photo"):
+        return ""
+    return f'\n    <img class="photo" src="../{esc(p["photo"])}" alt="Portrait of {esc(name)}" width="128" height="128">'
+
+
+def og_image_html(p: dict) -> str:
+    if not p.get("photo"):
+        return ""
+    return f'\n<meta property="og:image" content="{BASE}/{esc(p["photo"])}">'
+
+
 def build_person(p: dict) -> dict:
     slug = p["slug"]
     url = f"{BASE}/{slug}/"
@@ -445,6 +466,8 @@ def build_person(p: dict) -> dict:
         .replace("{{ORG}}", esc(p["org"]))
         .replace("{{TAGLINE}}", esc(p.get("tagline") or ""))
         .replace("{{URL}}", esc(url))
+        .replace("{{PHOTO}}", photo_html(p, name))
+        .replace("{{OG_IMAGE}}", og_image_html(p))
         .replace("{{VCF}}", esc(vcf_name))
         .replace("{{ROWS}}", rows_html(p, p["brand"]))
         .replace("{{QR}}", qr_svg)
