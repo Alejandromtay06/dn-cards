@@ -1,0 +1,64 @@
+{
+  "base_url": "https://alejandromtay06.github.io/dn-cards",
+  "people": [
+    {
+      "slug": "mehr-eliezer",
+      "brand": "dni",
+      "first": "Mehr",
+      "last": "Eliezer",
+      "title": "Marketing Director",
+      "org": "Diamond National Investments",
+      "tagline": "Bold ventures. Balanced returns.",
+      "email": "meliezer@dn-investments.com",
+      "phone_display": "+507 6822-7290",
+      "phone_e164": "+50768227290",
+      "phone_label": "Cell",
+      "website": "dn-investments.com",
+      "address": null
+    },
+    {
+      "slug": "jennifer-levant",
+      "brand": "crystal",
+      "first": "Jennifer",
+      "last": "Levant",
+      "title": "Director of Operations",
+      "org": "Crystal",
+      "org_parent": "Diamond National Realty",
+      "tagline": null,
+      "email": "jlevant@dnrealtycorp.com",
+      "phone_display": null,
+      "phone_e164": null,
+      "phone_label": null,
+      "website": null,
+      "address": {
+        "street": "5180 Roswell Rd NE, Suite 203",
+        "city": "Atlanta",
+        "state": "GA",
+        "zip": "30342",
+        "country": "USA"
+      }
+    },
+    {
+      "slug": "ailin-gava",
+      "brand": "crystal",
+      "first": "Ailin Abigail",
+      "last": "Gava",
+      "title": "Systems, Process & Training Manager",
+      "org": "Crystal",
+      "org_parent": "Diamond National Realty",
+      "tagline": null,
+      "email": "a.gava@dnrealtycorp.com",
+      "phone_display": "+1 404-595-3901",
+      "phone_e164": "+14045953901",
+      "phone_label": "Cell",
+      "website": null,
+      "address": {
+        "street": "5180 Roswell Rd NE, Suite 203",
+        "city": "Atlanta",
+        "state": "GA",
+        "zip": "30342",
+        "country": "USA"
+      }
+    }
+  ]
+}
