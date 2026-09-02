@@ -484,7 +484,7 @@ MONO_TEMPLATE = """<!DOCTYPE html>
   .card{max-width:430px; margin:0 auto; min-height:100vh; background:var(--bg); display:flex; flex-direction:column}
   @media (min-width:480px){ body{padding:40px 0; background:#E9E6E2} .card{min-height:812px; border-radius:35px; overflow:hidden; box-shadow:0 36px 70px -26px rgba(36,33,42,.55)} }
 
-  .hero{position:relative; height:clamp(340px, 49vh, 420px); flex:none}
+  .hero{position:relative; height:clamp(360px, min(108vw, 54vh), 470px); flex:none}
   .hero img.portrait{display:block; width:100%; height:100%; object-fit:cover; object-position:{{HERO_POS}}; -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 52%,rgba(0,0,0,.75) 72%,rgba(0,0,0,.28) 88%,rgba(0,0,0,0) 100%); mask-image:linear-gradient(180deg,#000 0%,#000 52%,rgba(0,0,0,.75) 72%,rgba(0,0,0,.28) 88%,rgba(0,0,0,0) 100%)}
   .hero .shade{position:absolute; inset:0; background:{{SHADE}}}
   .hero .logo{position:absolute; left:26px; top:calc(26px + env(safe-area-inset-top)); height:{{LOGO_H}}px; width:auto}
