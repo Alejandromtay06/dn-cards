@@ -15,7 +15,8 @@
       "phone_label": "Cell",
       "website": "dn-investments.com",
       "address": null,
-      "photo": null
+      "whatsapp": true,
+      "linkedin": "mehreliezer"
     },
     {
       "slug": "jennifer-levant",
@@ -38,7 +39,8 @@
         "zip": "30342",
         "country": "USA"
       },
-      "photo": "assets/jennifer-levant.jpg"
+      "whatsapp": false,
+      "linkedin": null
     },
     {
       "slug": "ailin-gava",
@@ -61,7 +63,8 @@
         "zip": "30342",
         "country": "USA"
       },
-      "photo": "assets/ailin-gava.jpg"
+      "whatsapp": false,
+      "linkedin": null
     }
   ]
 }

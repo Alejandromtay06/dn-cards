@@ -2,12 +2,14 @@
 """Build the digital business card site.
 
 Reads people.json, then writes for every person:
-  <slug>/index.html      the card page (DNI or Crystal design system)
-  <slug>/<slug>.vcf      vCard for "Save contact"
+  <slug>/index.html      the card page (DNI or Crystal tokens, shared layout)
+  <slug>/<slug>.vcf      vCard for "Save contact" (with photo when available)
   qr/<slug>.svg          QR code -> card URL, brand colour, for the printed card
-  qr/<slug>.png          same, 2048 px, transparent background
+  qr/<slug>.png          same, ~2050 px, transparent background
   qr/<slug>-black.png    same, black, transparent background
 and the root index.html directory page.
+
+Photos: assets/<slug>.jpg (square hero) and assets/<slug>-vcf.jpg (240 px, embedded in the vCard).
 
 Usage:  python build.py
 Deps:   pip install segno
@@ -27,11 +29,72 @@ ROOT = pathlib.Path(__file__).resolve().parent
 CFG = json.loads((ROOT / "people.json").read_text(encoding="utf-8"))
 BASE = CFG["base_url"].rstrip("/")
 
-BRAND_INK = {"dni": "#263E56", "crystal": "#413C7C"}  # Silk Dark, Deep Midnight
-
 
 def esc(s: str | None) -> str:
     return html.escape(s or "", quote=True)
+
+
+# ----------------------------------------------------------------------------
+# Brand tokens (from dni-style-guide.html and crystal-tokens.css)
+# ----------------------------------------------------------------------------
+BRANDS = {
+    "dni": {
+        "ink": "#263E56",  # Silk Dark, used for the QR
+        "theme": "#263E56",
+        "fonts": "https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,600&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap",
+        "favicon": '<link rel="icon" href="../assets/dni-mark-dark.png">',
+        "css": """
+  :root{
+    --page:#F0E7E0; --panel:#FFFFFF; --ink:#0E1014; --muted:rgba(14,16,20,.62);
+    --brand:#263E56; --brand-hover:#1E232B; --on-brand:#F8F3F0; --rule:rgba(14,16,20,.14); --focus:#3B5D7F;
+    --display:"Aeonik Pro Extended","Archivo","Helvetica Neue",Arial,sans-serif;
+    --sans:"Aeonik Pro","Inter","Helvetica Neue",Arial,sans-serif;
+    --mono:"Aeonik Mono","JetBrains Mono",ui-monospace,monospace;
+    --ease:cubic-bezier(.2,0,0,1); --fast:160ms;
+  }
+  .name{font-family:var(--display); font-variation-settings:"wdth" 125; font-weight:500; letter-spacing:-.02em; font-size:30px}
+  .logo{height:40px}
+""",
+        "logo": '<img class="logo" src="../assets/dni-lockup-dark.png" alt="Diamond National Investments">',
+    },
+    "crystal": {
+        "ink": "#413C7C",  # Deep Midnight
+        "theme": "#413C7C",
+        "fonts": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap",
+        "favicon": '<link rel="icon" href="../assets/crystal-icon.svg" type="image/svg+xml">',
+        "css": """
+  :root{
+    --page:#EAE9F2; --panel:#FAF5EF; --ink:#24212A; --muted:#6E6A7E;
+    --brand:#413C7C; --brand-hover:#322E60; --on-brand:#FAF5EF; --rule:#DBDAE2; --focus:#BF77F5;
+    --display:"Aeonik Pro","Inter","Helvetica Neue",Arial,sans-serif;
+    --sans:"Aeonik Pro","Inter","Helvetica Neue",Arial,sans-serif;
+    --mono:"Aeonik Mono","JetBrains Mono",ui-monospace,monospace;
+    --ease:cubic-bezier(.22,1,.36,1); --fast:200ms;
+  }
+  .name{font-family:var(--display); font-weight:500; letter-spacing:-.02em; font-size:32px}
+  .logo{height:34px}
+""",
+        "logo": '<svg class="logo" viewBox="0 0 562.24 226.47" role="img" aria-label="Crystal"><path fill="#413C7C" d="M67.68 113.24 L113.24 0 L0 113.24 Z"/><path fill="#DBDAE2" d="M67.68 113.24 L113.24 226.47 L0 113.24 Z"/><g fill="#413C7C">{{WORDMARK}}</g></svg>',
+    },
+}
+
+ICONS = {
+    "chat": '<path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5 8.4 8.4 0 0 1-4-1L3 20l1-5.2A8.5 8.5 0 1 1 21 11.5z"/>',
+    "phone": '<path d="M6.6 3h3.2l1.6 4-2 1.4a12 12 0 0 0 6.2 6.2l1.4-2 4 1.6v3.2A2.6 2.6 0 0 1 18.4 20C10.5 19.6 4.4 13.5 4 5.6A2.6 2.6 0 0 1 6.6 3z"/>',
+    "mail": '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7.5 9 6 9-6"/>',
+    "linkedin": '<text x="12" y="16.6" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="13.5" fill="currentColor" stroke="none">in</text>',
+    "globe": '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+    "pin": '<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+    "user-plus": '<circle cx="9" cy="8" r="3.5"/><path d="M3 20a6 6 0 0 1 12 0M18 8v6M15 11h6"/>',
+    "share": '<circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="m8.2 10.8 7.6-4.6M8.2 13.2l7.6 4.6"/>',
+}
+
+
+def icon(name: str, size: int = 22) -> str:
+    return (
+        f'<svg width="{size}" height="{size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" '
+        f'stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{ICONS[name]}</svg>'
+    )
 
 
 # ----------------------------------------------------------------------------
@@ -51,14 +114,16 @@ def vcard(p: dict, url: str) -> str:
     lines.append(f"EMAIL;TYPE=INTERNET,WORK:{p['email']}")
     if p.get("website"):
         lines.append(f"URL;TYPE=WORK:https://{p['website']}")
+    if p.get("linkedin"):
+        lines.append(f"X-SOCIALPROFILE;TYPE=linkedin:https://www.linkedin.com/in/{p['linkedin']}")
     if p.get("address"):
         a = p["address"]
         lines.append(
             f"ADR;TYPE=WORK:;;{v(a['street'])};{v(a['city'])};{v(a['state'])};{v(a['zip'])};{v(a['country'])}"
         )
     lines.append(f"URL;TYPE=PROFILE:{url}")
-    if p.get("photo"):
-        small = ROOT / p["photo"].replace(".jpg", "-vcf.jpg")
+    small = ROOT / "assets" / f"{p['slug']}-vcf.jpg"
+    if small.exists():
         b64 = base64.b64encode(small.read_bytes()).decode("ascii")
         line = "PHOTO;ENCODING=b;TYPE=JPEG:" + b64
         # RFC 2425 folding: 75 octets per line, continuation lines start with a space
@@ -78,9 +143,10 @@ def make_qr(url: str, slug: str, ink: str) -> str:
     q = segno.make(url, error="q")  # 25% redundancy, plenty for print at card size
     out = ROOT / "qr"
     out.mkdir(exist_ok=True)
+    px = -(-2048 // q.symbol_size(border=2)[0])  # scale that lands at >= 2048 px
     q.save(str(out / f"{slug}.svg"), scale=20, border=2, dark=ink, light=None)
-    q.save(str(out / f"{slug}.png"), scale=-(-2048 // (q.symbol_size(border=2)[0])), border=2, dark=ink, light=None)
-    q.save(str(out / f"{slug}-black.png"), scale=-(-2048 // (q.symbol_size(border=2)[0])), border=2, dark="#000000", light=None)
+    q.save(str(out / f"{slug}.png"), scale=px, border=2, dark=ink, light=None)
+    q.save(str(out / f"{slug}-black.png"), scale=px, border=2, dark="#000000", light=None)
     buf = io.BytesIO()
     q.save(buf, kind="svg", scale=1, border=0, dark=ink, light=None, xmldecl=False, svgclass=None, lineclass=None)
     svg = buf.getvalue().decode("utf-8")
@@ -99,11 +165,11 @@ def make_qr(url: str, slug: str, ink: str) -> str:
 # ----------------------------------------------------------------------------
 SHARE_JS = """
 (function(){
-  var b=document.getElementById('share'); if(!b) return;
-  var url=location.href.split('#')[0], title=document.title, label=b.textContent;
+  var b=document.getElementById('share'), note=document.getElementById('scan'); if(!b) return;
+  var url=location.href.split('#')[0], title=document.title, orig=note?note.innerHTML:'';
+  function done(){ if(!note) return; note.textContent='Link copied'; setTimeout(function(){ note.innerHTML=orig; },2200); }
   b.addEventListener('click', function(){
     if(navigator.share){ navigator.share({title:title,url:url}).catch(function(){}); return; }
-    var done=function(){ b.textContent='Link copied'; setTimeout(function(){ b.textContent=label; },2200); };
     if(navigator.clipboard){ navigator.clipboard.writeText(url).then(done, function(){ prompt('Copy this link', url); }); }
     else { prompt('Copy this link', url); }
   });
@@ -111,275 +177,120 @@ SHARE_JS = """
 """
 
 
-def rows_html(p: dict, cls: str) -> str:
-    """Contact rows. cls names the design system so the label copy follows its casing rules."""
-    rows = []
-    lab = (lambda s: s.upper()) if cls == "dni" else (lambda s: s)
-    if p.get("tagline"):
-        rows.append(f'<li class="row static"><span class="k">{esc(lab("Focus"))}</span><span class="v">{esc(p["tagline"])}</span></li>')
-    rows.append(
-        f'<li><a class="row" href="mailto:{esc(p["email"])}"><span class="k">{esc(lab("Email"))}</span><span class="v">{esc(p["email"])}</span><span class="go" aria-hidden="true">→</span></a></li>'
+def row(href: str, ico: str, value: str, label: str, external: bool = False) -> str:
+    target = ' target="_blank" rel="noopener"' if external else ""
+    return (
+        f'<li><a class="row" href="{esc(href)}"{target}><span class="ico">{icon(ico)}</span>'
+        f'<span class="txt"><span class="v">{value}</span><span class="k">{esc(label)}</span></span></a></li>'
     )
+
+
+def rows_html(p: dict) -> str:
+    rows = []
     if p.get("phone_e164"):
-        rows.append(
-            f'<li><a class="row" href="tel:{esc(p["phone_e164"])}"><span class="k">{esc(lab(p.get("phone_label") or "Phone"))}</span><span class="v">{esc(p["phone_display"])}</span><span class="go" aria-hidden="true">→</span></a></li>'
-        )
+        if p.get("whatsapp"):
+            rows.append(row("https://wa.me/" + p["phone_e164"].lstrip("+"), "chat", esc(p["phone_display"]), "WhatsApp", True))
+        else:
+            rows.append(row("tel:" + p["phone_e164"], "phone", esc(p["phone_display"]), p.get("phone_label") or "Phone"))
+    rows.append(row("mailto:" + p["email"], "mail", esc(p["email"]), "Work"))
+    if p.get("linkedin"):
+        rows.append(row("https://www.linkedin.com/in/" + p["linkedin"], "linkedin", "in/" + esc(p["linkedin"]), "LinkedIn", True))
     if p.get("website"):
-        rows.append(
-            f'<li><a class="row" href="https://{esc(p["website"])}" target="_blank" rel="noopener"><span class="k">{esc(lab("Web"))}</span><span class="v">{esc(p["website"])}</span><span class="go" aria-hidden="true">→</span></a></li>'
-        )
+        rows.append(row("https://" + p["website"], "globe", esc(p["website"]), "Website", True))
     if p.get("address"):
         a = p["address"]
         full = f"{a['street']}, {a['city']}, {a['state']} {a['zip']}"
         maps = "https://maps.google.com/?q=" + full.replace(" ", "+")
-        rows.append(
-            f'<li><a class="row" href="{esc(maps)}" target="_blank" rel="noopener"><span class="k">{esc(lab("Office"))}</span><span class="v">{esc(a["street"]).replace(", ", "<br>")}<br>{esc(a["city"])}, {esc(a["state"])} {esc(a["zip"])}</span><span class="go" aria-hidden="true">→</span></a></li>'
-        )
+        value = f'{esc(a["street"])}<br>{esc(a["city"])}, {esc(a["state"])} {esc(a["zip"])}'
+        rows.append(row(maps, "pin", value, "Office", True))
     return "\n".join(rows)
 
 
 # ----------------------------------------------------------------------------
-# DNI page — dni-style-guide.html tokens (Feb 2026)
+# Page template: full-bleed portrait, logo, name, contact rows, save, QR
 # ----------------------------------------------------------------------------
-DNI_TEMPLATE = """<!DOCTYPE html>
+TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
-<meta name="theme-color" content="#263E56">
+<meta name="theme-color" content="{{THEME}}">
 <title>{{NAME}} · {{ORG}}</title>
 <meta name="description" content="{{NAME}}, {{TITLE}} at {{ORG}}. Save the contact or get in touch.">
 <meta property="og:title" content="{{NAME}} · {{ORG}}">
 <meta property="og:description" content="{{TITLE}} · {{ORG}}">
 <meta property="og:type" content="profile">
 <meta property="og:url" content="{{URL}}">{{OG_IMAGE}}
-<link rel="icon" href="../assets/dni-mark-light.png">
+{{FAVICON}}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,500;125,700&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --mine-dark:#0E1014; --mine-medium:#161A20; --mine-light:#1E232B;
-    --silk-dark:#263E56; --silk-medium:#3B5D7F; --silk-light:#8CA5BD;
-    --sand-light:#F8F3F0; --sand-dark:#F0E7E0; --white:#FFFFFF;
-    --leaf-medium:#626C51;
-    --rule:rgba(14,16,20,.14); --rule-dark:rgba(248,243,240,.20);
-    --font-display:"Aeonik Pro Extended","Archivo","Helvetica Neue",Arial,sans-serif;
-    --font-body:"Aeonik Pro","Inter","Helvetica Neue",Arial,sans-serif;
-    --font-mono:"Aeonik Mono","JetBrains Mono",ui-monospace,monospace;
-    --fast:160ms; --base:320ms; --ease:cubic-bezier(.2,0,0,1);
-    --margin:20px;
-  }
+<link href="{{FONTS}}" rel="stylesheet">
+<style>{{BRAND_CSS}}
   *{box-sizing:border-box; margin:0; padding:0}
   html{-webkit-text-size-adjust:100%}
-  body{background:var(--sand-dark); color:var(--mine-dark); font-family:var(--font-body); font-size:16px; line-height:1.6; font-weight:400; -webkit-font-smoothing:antialiased; min-height:100vh}
+  body{background:var(--page); color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.5; -webkit-font-smoothing:antialiased; min-height:100vh}
   a{color:inherit; text-decoration:none}
-  :where(a,button,[tabindex]):focus-visible{outline:2px solid var(--silk-medium); outline-offset:2px}
-  .card{max-width:480px; margin:0 auto; min-height:100vh; background:var(--sand-light); border-left:1px solid var(--rule); border-right:1px solid var(--rule); display:flex; flex-direction:column}
-  @media (min-width:520px){ body{padding:48px 0} .card{min-height:0; border:1px solid var(--rule)} }
+  :where(a,button,[tabindex]):focus-visible{outline:2px solid var(--focus); outline-offset:2px}
+  .card{max-width:430px; margin:0 auto; min-height:100vh; background:var(--panel); display:flex; flex-direction:column}
+  @media (min-width:480px){ body{padding:40px 0} .card{min-height:0; border:1px solid var(--rule); border-radius:28px; overflow:hidden} }
 
-  .rail{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:18px var(--margin); background:var(--silk-dark); border-bottom:1px solid var(--rule-dark)}
-  .rail img{display:block; height:30px; width:auto}
-  .rail .idx{font-family:var(--font-mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--silk-light)}
+  .hero{position:relative; aspect-ratio:1/1; max-height:460px; background:var(--brand); overflow:hidden}
+  .hero img{display:block; width:100%; height:100%; object-fit:cover; object-position:50% 25%}
+  .hero .fallback{position:absolute; inset:0; display:grid; place-items:center; padding:24%}
+  .hero .fallback img{width:100%; height:auto; object-fit:contain}
 
-  .hero{background:var(--silk-dark); color:var(--sand-light); padding:40px var(--margin) 36px; position:relative; overflow:hidden}
-  .hero .eyebrow{font-family:var(--font-mono); font-weight:500; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--silk-light); margin-bottom:28px}
-  .hero h1{font-family:var(--font-display); font-weight:700; font-variation-settings:"wdth" 125; font-size:40px; line-height:.98; letter-spacing:-.02em; color:var(--sand-light)}
-  .hero .title{margin-top:18px; font-size:16px; line-height:1.4; color:var(--sand-light)}
-  .hero .org{font-size:14px; color:var(--silk-light); margin-top:4px}
-  .hero .photo{display:block; width:128px; height:128px; object-fit:cover; margin-bottom:28px; outline:1px solid var(--rule-dark); outline-offset:-1px; position:relative; z-index:1}
-  .hero .mark{position:absolute; right:-6px; bottom:-14px; width:132px; height:132px; fill:var(--sand-light); opacity:.07; pointer-events:none}
+  .panel{padding:20px 24px 28px; display:flex; flex-direction:column; flex:1}
+  .head{display:flex; justify-content:flex-end; min-height:40px}
+  .logo{display:block; width:auto}
+  .who{margin-top:14px}
+  .name{color:var(--ink); line-height:1.1}
+  .title{margin-top:10px; font-size:16px; color:var(--muted); line-height:1.45}
+  .org{font-size:16px; color:var(--muted); line-height:1.45}
 
-  .rows{list-style:none; border-bottom:1px solid var(--rule)}
-  .row{display:grid; grid-template-columns:72px 1fr auto; align-items:baseline; gap:16px; padding:18px var(--margin); border-top:1px solid var(--rule); min-height:64px; transition:background var(--fast) var(--ease)}
-  a.row:hover{background:var(--sand-dark)}
-  .row .k{font-family:var(--font-mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--leaf-medium); padding-top:3px}
-  .row .v{font-size:16px; color:var(--mine-dark); overflow-wrap:anywhere}
-  .row.static .v{font-family:var(--font-display); font-weight:500; font-variation-settings:"wdth" 125; letter-spacing:-.01em; font-size:17px}
-  .row .go{font-family:var(--font-mono); color:var(--silk-medium); font-size:14px}
+  .rows{list-style:none; margin-top:22px; display:flex; flex-direction:column; gap:6px}
+  .row{display:flex; align-items:center; gap:16px; padding:8px 0; min-height:60px; transition:opacity var(--fast) var(--ease)}
+  .row:hover{opacity:.78}
+  .ico{flex:none; width:52px; height:52px; border-radius:50%; background:var(--brand); color:var(--on-brand); display:grid; place-items:center}
+  .txt{min-width:0}
+  .v{display:block; font-size:17px; color:var(--ink); overflow-wrap:anywhere; line-height:1.3}
+  .k{display:block; font-size:13px; color:var(--muted); margin-top:2px}
 
-  .actions{display:grid; grid-template-columns:1fr 1fr; gap:1px; padding:var(--margin); background:var(--sand-light)}
-  .btn{font-family:var(--font-body); font-size:14px; font-weight:500; padding:16px 20px; border:1px solid transparent; cursor:pointer; text-align:center; min-height:48px; transition:background var(--fast) var(--ease),color var(--fast) var(--ease)}
-  .btn-primary{background:var(--silk-dark); color:var(--sand-light)}
-  .btn-primary:hover{background:var(--mine-light)}
-  .btn-secondary{background:transparent; color:var(--silk-dark); border-color:var(--silk-dark)}
-  .btn-secondary:hover{background:rgba(38,62,86,.08)}
+  .btn{margin-top:22px; display:flex; align-items:center; justify-content:center; gap:10px; background:var(--brand); color:var(--on-brand); padding:16px 20px; border-radius:12px; font-size:16px; font-weight:500; min-height:52px; transition:background var(--fast) var(--ease)}
+  .btn:hover{background:var(--brand-hover)}
 
-  .share{padding:8px var(--margin) 32px; display:grid; grid-template-columns:1fr 112px; gap:20px; align-items:center; border-top:1px solid var(--rule)}
-  .share .eyebrow{font-family:var(--font-mono); font-weight:500; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--leaf-medium); margin:24px 0 10px}
-  .share p{font-size:14px; color:var(--mine-medium); max-width:34ch}
-  .share .qr{width:112px; height:112px; margin-top:24px; padding:8px; background:var(--white); border:1px solid var(--rule)}
-  .share .qr svg{display:block; width:100%; height:100%}
+  .foot{margin-top:24px; padding-top:22px; border-top:1px solid var(--rule); display:grid; grid-template-columns:100px 1fr 48px; gap:16px; align-items:center}
+  .qr{width:100px; height:100px; padding:7px; background:#fff; border:1px solid var(--rule); border-radius:10px}
+  .qr svg{display:block; width:100%; height:100%}
+  .scan{font-family:var(--mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); line-height:1.6}
+  .share{width:48px; height:48px; border-radius:50%; border:1px solid var(--rule); background:transparent; color:var(--brand); display:grid; place-items:center; cursor:pointer; transition:background var(--fast) var(--ease)}
+  .share:hover{background:var(--page)}
 
-  footer{margin-top:auto; padding:20px var(--margin) calc(20px + env(safe-area-inset-bottom)); background:var(--silk-dark); color:var(--silk-light); font-size:12px; line-height:1.5; display:flex; flex-direction:column; gap:4px; border-top:1px solid var(--rule-dark)}
-  footer .fig{font-family:var(--font-mono); letter-spacing:.06em}
-  @media (prefers-reduced-motion: reduce){ *{transition:none !important} }
-</style>
-</head>
-<body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <symbol id="dni" viewBox="0 0 200 200">
-    <path d="M0 0 L0 200 L100 200 C155.23 144.77 155.23 55.23 100 0 Z"/>
-    <path fill-rule="evenodd" d="M100 0 L200 100 L100 200 L200 200 L200 0 Z"/>
-  </symbol>
-</svg>
-<main class="card">
-  <header class="rail">
-    <img src="../assets/dni-lockup-light.png" alt="Diamond National Investments">
-    <span class="idx">Contact card</span>
-  </header>
-
-  <section class="hero">{{PHOTO}}
-    <div class="eyebrow">Digital business card</div>
-    <h1>{{FIRST}}<br>{{LAST}}</h1>
-    <div class="title">{{TITLE}}</div>
-    <div class="org">{{ORG}}</div>
-    <svg class="mark" aria-hidden="true"><use href="#dni"/></svg>
-  </section>
-
-  <ul class="rows">
-{{ROWS}}
-  </ul>
-
-  <div class="actions">
-    <a class="btn btn-primary" href="{{VCF}}" download="{{VCF}}">Save contact</a>
-    <button class="btn btn-secondary" id="share" type="button">Share this card</button>
-  </div>
-
-  <section class="share">
-    <div>
-      <div class="eyebrow">Scan to open</div>
-      <p>Point a phone camera at the code to open this card on another device.</p>
-    </div>
-    <div class="qr">{{QR}}</div>
-  </section>
-
-  <footer>
-    <span>{{ORG}}</span>
-    <span class="fig">{{TAGLINE}}</span>
-  </footer>
-</main>
-<script>{{JS}}</script>
-</body>
-</html>
-"""
-
-# ----------------------------------------------------------------------------
-# Crystal page — crystal-tokens.css / crystal-design-system.md (Apr 2026)
-# ----------------------------------------------------------------------------
-CRYSTAL_TEMPLATE = """<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="robots" content="noindex">
-<meta name="theme-color" content="#413C7C">
-<title>{{NAME}} · {{ORG}}</title>
-<meta name="description" content="{{NAME}}, {{TITLE}} at {{ORG}}. Save the contact or get in touch.">
-<meta property="og:title" content="{{NAME}} · {{ORG}}">
-<meta property="og:description" content="{{TITLE}} · {{ORG}}">
-<meta property="og:type" content="profile">
-<meta property="og:url" content="{{URL}}">{{OG_IMAGE}}
-<link rel="icon" href="../assets/crystal-icon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --alabaster:#FAF5EF; --silver:#DBDAE2; --midnight:#413C7C; --obsidian:#24212A; --white:#FFFFFF;
-    --periwinkle:#B8B9DE; --midnight-deep:#322E60; --midnight-wash:#EAE9F2; --slate-ink:#6E6A7E; --orchid:#BF77F5;
-    --rule:#DBDAE2; --rule-dark:rgba(250,245,239,.20);
-    --sans:"Aeonik Pro","Inter","Helvetica Neue",Arial,sans-serif;
-    --mono:"Aeonik Mono","JetBrains Mono",ui-monospace,monospace;
-    --fast:200ms; --base:400ms; --ease:cubic-bezier(.22,1,.36,1);
-    --margin:20px;
-  }
-  *{box-sizing:border-box; margin:0; padding:0}
-  html{-webkit-text-size-adjust:100%}
-  body{background:var(--midnight-wash); color:var(--obsidian); font-family:var(--sans); font-size:16px; line-height:1.6; font-weight:400; -webkit-font-smoothing:antialiased; min-height:100vh}
-  a{color:inherit; text-decoration:none}
-  :where(a,button,[tabindex]):focus-visible{outline:2px solid var(--orchid); outline-offset:2px}
-  .card{max-width:480px; margin:0 auto; min-height:100vh; background:var(--alabaster); border-left:1px solid var(--rule); border-right:1px solid var(--rule); display:flex; flex-direction:column}
-  @media (min-width:520px){ body{padding:48px 0} .card{min-height:0; border:1px solid var(--rule)} }
-
-  .rail{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:18px var(--margin); background:var(--midnight); border-bottom:1px solid var(--rule-dark)}
-  .rail svg{display:block; height:26px; width:auto}
-  .rail .idx{font-family:var(--mono); font-size:13px; letter-spacing:.02em; color:var(--periwinkle)}
-
-  .hero{background:var(--midnight); color:var(--alabaster); padding:40px var(--margin) 36px; position:relative; overflow:hidden}
-  .hero .eyebrow{font-family:var(--mono); font-size:13px; letter-spacing:.02em; line-height:1.2; color:var(--periwinkle); margin-bottom:28px}
-  .hero h1{font-family:var(--sans); font-weight:500; font-size:34px; line-height:1.06; letter-spacing:-.02em; color:var(--alabaster)}
-  .hero .title{margin-top:16px; font-size:16px; line-height:1.4; color:var(--alabaster)}
-  .hero .org{font-size:14px; color:var(--periwinkle); margin-top:4px}
-  .hero .photo{display:block; width:128px; height:128px; object-fit:cover; margin-bottom:28px; outline:1px solid var(--rule-dark); outline-offset:-1px; position:relative; z-index:1}
-  .hero .wm{position:absolute; left:58%; bottom:-22px; width:360px; height:auto; pointer-events:none}
-  .hero .wm path{fill:var(--alabaster); fill-opacity:.07}
-
-  .rows{list-style:none; border-bottom:1px solid var(--rule)}
-  .row{display:grid; grid-template-columns:64px 1fr auto; align-items:baseline; gap:16px; padding:18px var(--margin); border-top:1px solid var(--rule); min-height:64px; transition:background var(--fast) var(--ease)}
-  a.row:hover{background:var(--midnight-wash)}
-  .row .k{font-family:var(--mono); font-size:13px; letter-spacing:.02em; color:var(--slate-ink); padding-top:2px}
-  .row .v{font-size:16px; color:var(--obsidian); overflow-wrap:anywhere}
-  .row .go{font-family:var(--mono); color:var(--midnight); font-size:14px}
-
-  .actions{display:grid; grid-template-columns:1fr 1fr; gap:1px; padding:var(--margin)}
-  .btn{font-family:var(--sans); font-size:14px; font-weight:500; padding:16px 20px; border:1px solid transparent; cursor:pointer; text-align:center; min-height:48px; transition:background var(--fast) var(--ease),color var(--fast) var(--ease)}
-  .btn-primary{background:var(--midnight); color:var(--alabaster)}
-  .btn-primary:hover{background:var(--midnight-deep)}
-  .btn-secondary{background:transparent; color:var(--midnight); border-color:var(--midnight)}
-  .btn-secondary:hover{background:rgba(65,60,124,.08)}
-
-  .share{padding:8px var(--margin) 32px; display:grid; grid-template-columns:1fr 112px; gap:20px; align-items:center; border-top:1px solid var(--rule)}
-  .share .eyebrow{font-family:var(--mono); font-size:13px; letter-spacing:.02em; color:var(--slate-ink); margin:24px 0 10px}
-  .share p{font-size:14px; color:var(--obsidian); max-width:34ch}
-  .share .qr{width:112px; height:112px; margin-top:24px; padding:8px; background:var(--white); border:1px solid var(--rule)}
-  .share .qr svg{display:block; width:100%; height:100%}
-
-  footer{margin-top:auto; padding:20px var(--margin) calc(20px + env(safe-area-inset-bottom)); background:var(--midnight); color:var(--periwinkle); font-size:13px; line-height:1.5; display:flex; flex-direction:column; gap:4px; border-top:1px solid var(--rule-dark)}
-  footer .fig{font-family:var(--mono); letter-spacing:.02em}
+  .tag{margin-top:26px; font-size:12px; color:var(--muted); text-align:center}
   @media (prefers-reduced-motion: reduce){ *{transition:none !important} }
 </style>
 </head>
 <body>
 <main class="card">
-  <header class="rail">
-    <svg viewBox="0 0 562.24 226.47" role="img" aria-label="Crystal">
-      <g><path fill="#FAF5EF" d="M67.68 113.24 L113.24 0 L0 113.24 Z"/><path fill="#B8B9DE" d="M67.68 113.24 L113.24 226.47 L0 113.24 Z"/></g>
-      <g fill="#FAF5EF">{{WORDMARK}}</g>
-    </svg>
-    <span class="idx">Contact card</span>
-  </header>
-
-  <section class="hero">{{PHOTO}}
-    <div class="eyebrow">Digital business card</div>
-    <h1>{{FIRST}}<br>{{LAST}}</h1>
-    <div class="title">{{TITLE}}</div>
-    <div class="org">{{ORG}}{{ORG_PARENT}}</div>
-    <svg class="wm" viewBox="120 30 450 170" aria-hidden="true">{{WORDMARK}}</svg>
-  </section>
-
-  <ul class="rows">
-{{ROWS}}
-  </ul>
-
-  <div class="actions">
-    <a class="btn btn-primary" href="{{VCF}}" download="{{VCF}}">Save contact</a>
-    <button class="btn btn-secondary" id="share" type="button">Share this card</button>
-  </div>
-
-  <section class="share">
-    <div>
-      <div class="eyebrow">Scan to open</div>
-      <p>Point a phone camera at the code to open this card on another device.</p>
+  <figure class="hero">{{HERO}}</figure>
+  <section class="panel">
+    <div class="head">{{LOGO}}</div>
+    <div class="who">
+      <h1 class="name">{{NAME}}</h1>
+      <p class="title">{{TITLE}}</p>
+      <p class="org">{{ORG_LINE}}</p>
     </div>
-    <div class="qr">{{QR}}</div>
+    <ul class="rows">
+{{ROWS}}
+    </ul>
+    <a class="btn" href="{{VCF}}" download="{{VCF}}">{{ICON_SAVE}}Save contact</a>
+    <div class="foot">
+      <div class="qr">{{QR}}</div>
+      <p class="scan" id="scan">Scan to open<br>this card</p>
+      <button class="share" id="share" type="button" aria-label="Share this card">{{ICON_SHARE}}</button>
+    </div>
+    {{TAGLINE}}
   </section>
-
-  <footer>
-    <span>{{ORG_FOOT}}</span>
-    <span class="fig">Where every day feels like a getaway.</span>
-  </footer>
 </main>
 <script>{{JS}}</script>
 </body>
@@ -427,20 +338,17 @@ INDEX_TEMPLATE = """<!DOCTYPE html>
 
 def wordmark_paths() -> str:
     svg = (ROOT / "assets" / "crystal-lockup.svg").read_text(encoding="utf-8")
-    g = re.search(r'<g id="crystal-wordmark"[^>]*>(.*?)</g>', svg, re.S).group(1)
-    return g.strip()
+    return re.search(r'<g id="crystal-wordmark"[^>]*>(.*?)</g>', svg, re.S).group(1).strip()
 
 
-def photo_html(p: dict, name: str) -> str:
-    if not p.get("photo"):
-        return ""
-    return f'\n    <img class="photo" src="../{esc(p["photo"])}" alt="Portrait of {esc(name)}" width="128" height="128">'
-
-
-def og_image_html(p: dict) -> str:
-    if not p.get("photo"):
-        return ""
-    return f'\n<meta property="og:image" content="{BASE}/{esc(p["photo"])}">'
+def hero_html(p: dict, name: str, brand: dict) -> str:
+    photo = ROOT / "assets" / f"{p['slug']}.jpg"
+    if photo.exists():
+        return f'<img src="../assets/{p["slug"]}.jpg" alt="Portrait of {esc(name)}" width="960" height="960">'
+    # no photo yet: brand-coloured panel with the reversed lockup
+    if p["brand"] == "dni":
+        return '<div class="fallback"><img src="../assets/dni-lockup-light.png" alt=""></div>'
+    return '<div class="fallback"><svg viewBox="0 0 562.24 226.47" aria-hidden="true"><path fill="#FAF5EF" d="M67.68 113.24 L113.24 0 L0 113.24 Z"/><path fill="#B8B9DE" d="M67.68 113.24 L113.24 226.47 L0 113.24 Z"/><g fill="#FAF5EF">{{WORDMARK}}</g></svg></div>'
 
 
 def build_person(p: dict) -> dict:
@@ -451,31 +359,36 @@ def build_person(p: dict) -> dict:
     vcf_name = f"{slug}.vcf"
     (out / vcf_name).write_text(vcard(p, url), encoding="utf-8", newline="")
 
-    ink = BRAND_INK[p["brand"]]
-    qr_svg = make_qr(url, slug, ink)
+    brand = BRANDS[p["brand"]]
+    qr_svg = make_qr(url, slug, brand["ink"])
     name = f"{p['first']} {p['last']}"
+    has_photo = (ROOT / "assets" / f"{slug}.jpg").exists()
+    org_line = esc(p["org"]) + (f' · {esc(p["org_parent"])}' if p.get("org_parent") else "")
 
-    tpl = DNI_TEMPLATE if p["brand"] == "dni" else CRYSTAL_TEMPLATE
     page = (
-        tpl.replace("{{NAME}}", esc(name))
-        .replace("{{FIRST}}", esc(p["first"]))
-        .replace("{{LAST}}", esc(p["last"]))
+        TEMPLATE.replace("{{BRAND_CSS}}", brand["css"])
+        .replace("{{FONTS}}", brand["fonts"])
+        .replace("{{FAVICON}}", brand["favicon"])
+        .replace("{{THEME}}", brand["theme"])
+        .replace("{{LOGO}}", brand["logo"])
+        .replace("{{HERO}}", hero_html(p, name, brand))
+        .replace("{{OG_IMAGE}}", f'\n<meta property="og:image" content="{BASE}/assets/{slug}.jpg">' if has_photo else "")
+        .replace("{{NAME}}", esc(name))
         .replace("{{TITLE}}", esc(p["title"]))
-        .replace("{{ORG_PARENT}}", (" · " + esc(p["org_parent"])) if p.get("org_parent") else "")
-        .replace("{{ORG_FOOT}}", esc(p.get("org_parent") or p["org"]))
+        .replace("{{ORG_LINE}}", org_line)
         .replace("{{ORG}}", esc(p["org"]))
-        .replace("{{TAGLINE}}", esc(p.get("tagline") or ""))
         .replace("{{URL}}", esc(url))
-        .replace("{{PHOTO}}", photo_html(p, name))
-        .replace("{{OG_IMAGE}}", og_image_html(p))
         .replace("{{VCF}}", esc(vcf_name))
-        .replace("{{ROWS}}", rows_html(p, p["brand"]))
+        .replace("{{ROWS}}", rows_html(p))
         .replace("{{QR}}", qr_svg)
+        .replace("{{ICON_SAVE}}", icon("user-plus", 20))
+        .replace("{{ICON_SHARE}}", icon("share", 20))
+        .replace("{{TAGLINE}}", f'<p class="tag">{esc(p["tagline"])}</p>' if p.get("tagline") else "")
         .replace("{{WORDMARK}}", wordmark_paths())
         .replace("{{JS}}", SHARE_JS.strip())
     )
     (out / "index.html").write_text(page, encoding="utf-8")
-    return {"name": name, "title": p["title"], "org": p["org"], "slug": slug, "url": url}
+    return {"name": name, "title": p["title"], "org": p["org"], "slug": slug, "url": url, "photo": has_photo}
 
 
 def main() -> None:
@@ -486,7 +399,7 @@ def main() -> None:
     )
     (ROOT / "index.html").write_text(INDEX_TEMPLATE.replace("{{ITEMS}}", items), encoding="utf-8")
     for b in built:
-        print(f"{b['name']:<22} {b['url']}")
+        print(f"{b['name']:<22} {'photo' if b['photo'] else 'NO PHOTO':<9} {b['url']}")
 
 
 if __name__ == "__main__":
