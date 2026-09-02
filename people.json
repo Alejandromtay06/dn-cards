@@ -16,7 +16,10 @@
       "website": "dn-investments.com",
       "address": null,
       "whatsapp": true,
-      "linkedin": "mehreliezer"
+      "linkedin": "mehreliezer",
+      "hero": "assets/mehr-portrait.jpg",
+      "hero_position": "50% 18%",
+      "wa_text": "Hi Mehr, I got your card"
     },
     {
       "slug": "jennifer-levant",
@@ -44,7 +47,7 @@
       "linkedin_display": "in/jennifer-levant",
       "hide_address": true,
       "hero": "assets/jennifer-portrait.jpg",
-      "hero_position": "50% 14%"
+      "hero_position": "50% 18%"
     },
     {
       "slug": "ailin-gava",
@@ -72,7 +75,7 @@
       "linkedin_display": "in/ailin-gava",
       "wa_text": null,
       "hero": "assets/ailin-portrait.jpg",
-      "hero_position": "50% 14%",
+      "hero_position": "50% 18%",
       "hide_address": true
     }
   ]

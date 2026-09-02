@@ -437,7 +437,137 @@ INDEX_TEMPLATE = """<!DOCTYPE html>
 """
 
 
-BRANDS["dnr"]["template"] = DNR_TEMPLATE
+# ----------------------------------------------------------------------------
+# "1b Monolith" from Claude Design: dark ground, full-bleed portrait, actions as a pill grid,
+# outlined Save contact, footer with reversed lockup + share. No QR (the printed card has it).
+# ----------------------------------------------------------------------------
+MONO = {
+    "dni": {  # 1b DNI variant (Business Card.dc.html)
+        "bg": "#0E1014", "tile": "#161A20", "tile_border": "#262B33", "rule": "#1E232B", "text": "#F8F3F0",
+        "accent": "#8CA5BD", "eyebrow": "#8CA5BD", "save_border": "#8CA5BD", "save_text": "#8CA5BD",
+        "save_hover": "rgba(140,165,189,.14)", "logo": "assets/dni-lockup-light.png", "logo_h": 32, "logo_foot_h": 56,
+        "shade": "linear-gradient(180deg, rgba(14,16,20,.5) 0%, rgba(14,16,20,0) 28%, rgba(14,16,20,.3) 62%, rgba(14,16,20,.55) 82%, rgba(14,16,20,.35) 100%)",
+    },
+    "dnr": {  # 1b Crystal/DNR variant (Ailin, Jennifer, and Mehr's second variant)
+        "bg": "#24212A", "tile": "#2C2833", "tile_border": "#37333F", "rule": "#332F3B", "text": "#FAF5EF",
+        "accent": "#BF77F5", "eyebrow": "#F56C73", "save_border": "#BF77F5", "save_text": "#D3A3FA",
+        "save_hover": "rgba(191,119,245,.12)", "logo": "assets/dnr-white.png", "logo_h": 40, "logo_foot_h": 60,
+        "shade": "linear-gradient(180deg, rgba(36,33,42,.5) 0%, rgba(36,33,42,0) 28%, rgba(36,33,42,.3) 62%, rgba(36,33,42,.55) 82%, rgba(36,33,42,.35) 100%)",
+    },
+}
+MONO["crystal"] = MONO["dnr"]
+
+MONO_TEMPLATE = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="{{BG}}">
+<title>{{NAME}} · {{ORG}}</title>
+<meta name="description" content="{{NAME}}, {{TITLE}} at {{ORG}}. Save the contact or get in touch.">
+<meta property="og:title" content="{{NAME}} · {{ORG}}">
+<meta property="og:description" content="{{TITLE}} · {{ORG}}">
+<meta property="og:type" content="profile">
+<meta property="og:url" content="{{URL}}">{{OG_IMAGE}}
+{{FAVICON}}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:{{BG}}; --tile:{{TILE}}; --tile-border:{{TILE_BORDER}}; --rule:{{RULE}}; --text:{{TEXT}}; --accent:{{ACCENT}}; --eyebrow:{{EYEBROW}}; --save-border:{{SAVE_BORDER}}; --save-text:{{SAVE_TEXT}}; --save-hover:{{SAVE_HOVER}}}
+  *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent}
+  html{-webkit-text-size-adjust:100%}
+  body{background:var(--bg); color:var(--text); font-family:Manrope,system-ui,sans-serif; -webkit-font-smoothing:antialiased; min-height:100vh}
+  a{color:inherit; text-decoration:none}
+  :focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  .card{max-width:430px; margin:0 auto; min-height:100vh; background:var(--bg); display:flex; flex-direction:column}
+  @media (min-width:480px){ body{padding:40px 0; background:#E9E6E2} .card{min-height:812px; border-radius:35px; overflow:hidden; box-shadow:0 36px 70px -26px rgba(36,33,42,.55)} }
+
+  .hero{position:relative; height:clamp(340px, 49vh, 420px); flex:none}
+  .hero img.portrait{display:block; width:100%; height:100%; object-fit:cover; object-position:{{HERO_POS}}; -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 52%,rgba(0,0,0,.75) 72%,rgba(0,0,0,.28) 88%,rgba(0,0,0,0) 100%); mask-image:linear-gradient(180deg,#000 0%,#000 52%,rgba(0,0,0,.75) 72%,rgba(0,0,0,.28) 88%,rgba(0,0,0,0) 100%)}
+  .hero .shade{position:absolute; inset:0; background:{{SHADE}}}
+  .hero .logo{position:absolute; left:26px; top:calc(26px + env(safe-area-inset-top)); height:{{LOGO_H}}px; width:auto}
+  .hero .cap{position:absolute; left:26px; right:26px; bottom:22px}
+  .eyebrow{display:block; font:500 10px/1.4 'DM Mono',monospace; letter-spacing:.2em; text-transform:uppercase; color:var(--eyebrow)}
+  .hero h1{margin-top:11px; font:300 34px/1.05 Manrope,sans-serif; letter-spacing:-.02em; color:#FFFFFF}
+
+  .body{flex:1; padding:4px 26px calc(22px + env(safe-area-inset-bottom)); display:flex; flex-direction:column; gap:12px}
+  .grid{margin:auto 0; display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  .tile{height:76px; border:1px solid var(--tile-border); border-radius:14px; background:var(--tile); color:var(--text); display:flex; flex-direction:column; justify-content:center; gap:9px; padding:0 16px; transition:border-color 160ms ease}
+  .tile:hover{border-color:var(--accent)}
+  .tile.wide{grid-column:1 / -1}
+  .tile svg{width:19px; height:19px; stroke-width:1.7}
+  .tile span{font:500 13px/1 Manrope,sans-serif}
+  .btn{height:56px; border:1px solid var(--save-border); border-radius:14px; background:transparent; color:var(--save-text); font:600 15px/1 Manrope,sans-serif; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:9px; transition:background 160ms ease}
+  .btn:hover{background:var(--save-hover)}
+  .btn svg{width:18px; height:18px}
+  .foot{margin-top:auto; padding-top:14px; border-top:1px solid var(--rule); display:flex; align-items:center; justify-content:space-between; gap:14px}
+  .foot img{display:block; height:{{LOGO_FOOT_H}}px; width:auto}
+  .share{width:46px; height:46px; border:1px solid var(--tile-border); border-radius:12px; background:transparent; color:var(--text); cursor:pointer; display:grid; place-items:center; transition:border-color 160ms ease}
+  .share:hover{border-color:var(--accent)}
+  .share svg{width:17px; height:17px}
+  .toast{position:fixed; left:50%; bottom:calc(96px + env(safe-area-inset-bottom)); transform:translateX(-50%); background:var(--text); color:var(--bg); font:500 13px/1 Manrope,sans-serif; padding:10px 14px; border-radius:20px; opacity:0; pointer-events:none; transition:opacity 160ms ease}
+  .toast.on{opacity:1}
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important} }
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="hero">
+    <img class="portrait" src="../{{HERO_SRC}}" alt="{{NAME}}" width="920" height="1150">
+    <div class="shade"></div>
+    <img class="logo" src="../{{LOGO_SRC}}" alt="{{ORG}}">
+    <div class="cap">
+      <span class="eyebrow">{{TITLE}}</span>
+      <h1>{{NAME}}</h1>
+    </div>
+  </div>
+  <div class="body">
+    <div class="grid">
+{{TILES}}
+    </div>
+    <a class="btn" href="{{VCF}}" download="{{VCF}}">{{ICON_SAVE}}Save contact</a>
+    <div class="foot">
+      <img src="../{{LOGO_SRC}}" alt="{{ORG}}">
+      <button class="share" id="share" type="button" aria-label="Share card">{{ICON_SHARE}}</button>
+    </div>
+  </div>
+  <div class="toast" id="scan" role="status"></div>
+</main>
+<script>{{JS}}</script>
+</body>
+</html>
+"""
+
+
+def tiles_html(p: dict) -> str:
+    tiles = []
+    if p.get("phone_e164"):
+        if p.get("whatsapp"):
+            href = "https://wa.me/" + p["phone_e164"].lstrip("+") + ("?text=" + quote(p["wa_text"]) if p.get("wa_text") else "")
+            tiles.append((href, "chat", "WhatsApp", True))
+        else:
+            tiles.append(("tel:" + p["phone_e164"], "phone", "Call", False))
+    tiles.append(("mailto:" + p["email"], "mail", "Email", False))
+    if p.get("linkedin"):
+        tiles.append(("https://www.linkedin.com/in/" + p["linkedin"] + "/", "linkedin", "LinkedIn", True))
+    if p.get("website"):
+        tiles.append(("https://" + p["website"], "globe", "Website", True))
+    if p.get("address") and not p.get("hide_address"):
+        a = p["address"]
+        maps = "https://maps.google.com/?q=" + quote(f"{a['street']}, {a['city']}, {a['state']} {a['zip']}")
+        tiles.append((maps, "pin", "Office", True))
+    out = []
+    for i, (href, ico, label, ext) in enumerate(tiles):
+        wide = " wide" if (i == len(tiles) - 1 and len(tiles) % 2 == 1) else ""
+        target = ' target="_blank" rel="noopener"' if ext else ""
+        out.append(f'      <a class="tile{wide}" href="{esc(href)}"{target}>{icon(ico, 19)}<span>{esc(label)}</span></a>')
+    return "\n".join(out)
+
+
+for _b in ("dni", "dnr", "crystal"):
+    BRANDS[_b]["template"] = MONO_TEMPLATE
 
 
 def wordmark_paths() -> str:
@@ -472,6 +602,7 @@ def build_person(p: dict) -> dict:
     (out / vcf_name).write_text(vcard(p, url), encoding="utf-8", newline="")
 
     brand = BRANDS[p["brand"]]
+    m = MONO[p["brand"]]
     qr_svg = make_qr(url, slug, brand["ink"])
     name = f"{p['first']} {p['last']}"
     has_photo = (ROOT / "assets" / f"{slug}.jpg").exists()
@@ -481,6 +612,12 @@ def build_person(p: dict) -> dict:
     has_photo = has_photo or bool(p.get("hero"))
     page = (
         brand.get("template", TEMPLATE).replace("{{BRAND_CSS}}", brand["css"])
+        .replace("{{BG}}", m["bg"]).replace("{{TILE_BORDER}}", m["tile_border"]).replace("{{TILE}}", m["tile"])
+        .replace("{{RULE}}", m["rule"]).replace("{{TEXT}}", m["text"]).replace("{{ACCENT}}", m["accent"])
+        .replace("{{EYEBROW}}", m["eyebrow"]).replace("{{SAVE_BORDER}}", m["save_border"]).replace("{{SAVE_TEXT}}", m["save_text"])
+        .replace("{{SAVE_HOVER}}", m["save_hover"]).replace("{{SHADE}}", m["shade"])
+        .replace("{{LOGO_SRC}}", m["logo"]).replace("{{LOGO_H}}", str(m["logo_h"])).replace("{{LOGO_FOOT_H}}", str(m["logo_foot_h"]))
+        .replace("{{TILES}}", tiles_html(p))
         .replace("{{HERO_SRC}}", esc(hero_src))
         .replace("{{HERO_POS}}", esc(p.get("hero_position") or "50% 25%"))
         .replace("{{FONTS}}", brand["fonts"])

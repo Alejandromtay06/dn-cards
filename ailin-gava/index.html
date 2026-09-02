@@ -12,47 +12,44 @@
 <meta property="og:type" content="profile">
 <meta property="og:url" content="https://alejandromtay06.github.io/dn-cards/ailin-gava/">
 <meta property="og:image" content="https://alejandromtay06.github.io/dn-cards/assets/ailin-portrait.jpg">
-<link rel="icon" href="../assets/dnr-purple.png">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
+  :root{--bg:#24212A; --tile:#2C2833; --tile-border:#37333F; --rule:#332F3B; --text:#FAF5EF; --accent:#BF77F5; --eyebrow:#F56C73; --save-border:#BF77F5; --save-text:#D3A3FA; --save-hover:rgba(191,119,245,.12)}
   *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent}
   html{-webkit-text-size-adjust:100%}
-  body{background:#E9E6E2; color:#24212A; font-family:Manrope,system-ui,sans-serif; -webkit-font-smoothing:antialiased; min-height:100vh}
+  body{background:var(--bg); color:var(--text); font-family:Manrope,system-ui,sans-serif; -webkit-font-smoothing:antialiased; min-height:100vh}
   a{color:inherit; text-decoration:none}
-  ::selection{background:rgba(65,60,124,.18)}
-  :focus-visible{outline:2px solid #413C7C; outline-offset:2px}
-  .card{max-width:430px; margin:0 auto; min-height:100vh; background:#FFFFFF; display:flex; flex-direction:column}
-  @media (min-width:480px){ body{padding:40px 0} .card{min-height:812px; border-radius:35px; overflow:hidden; box-shadow:0 36px 70px -26px rgba(36,33,42,.55)} }
+  :focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  .card{max-width:430px; margin:0 auto; min-height:100vh; background:var(--bg); display:flex; flex-direction:column}
+  @media (min-width:480px){ body{padding:40px 0; background:#E9E6E2} .card{min-height:812px; border-radius:35px; overflow:hidden; box-shadow:0 36px 70px -26px rgba(36,33,42,.55)} }
 
-  .hero{position:relative; height:clamp(280px, 37vh, 340px); flex:none; overflow:hidden; background:#24212A}
-  .hero img{display:block; width:100%; height:100%; object-fit:cover; object-position:50% 14%}
-  .hero .shade{position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0) 34%, rgba(36,33,42,.5) 72%, rgba(36,33,42,.92) 100%)}
+  .hero{position:relative; height:clamp(340px, 49vh, 420px); flex:none}
+  .hero img.portrait{display:block; width:100%; height:100%; object-fit:cover; object-position:50% 18%; -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 52%,rgba(0,0,0,.75) 72%,rgba(0,0,0,.28) 88%,rgba(0,0,0,0) 100%); mask-image:linear-gradient(180deg,#000 0%,#000 52%,rgba(0,0,0,.75) 72%,rgba(0,0,0,.28) 88%,rgba(0,0,0,0) 100%)}
+  .hero .shade{position:absolute; inset:0; background:linear-gradient(180deg, rgba(36,33,42,.5) 0%, rgba(36,33,42,0) 28%, rgba(36,33,42,.3) 62%, rgba(36,33,42,.55) 82%, rgba(36,33,42,.35) 100%)}
+  .hero .logo{position:absolute; left:26px; top:calc(26px + env(safe-area-inset-top)); height:40px; width:auto}
   .hero .cap{position:absolute; left:26px; right:26px; bottom:22px}
-  .eyebrow{display:block; font:500 10px/1.4 'DM Mono',monospace; letter-spacing:.2em; text-transform:uppercase; color:#F56C73}
-  .hero h1{margin-top:10px; font:300 33px/1.05 Manrope,sans-serif; letter-spacing:-.025em; color:#FFFFFF}
+  .eyebrow{display:block; font:500 10px/1.4 'DM Mono',monospace; letter-spacing:.2em; text-transform:uppercase; color:var(--eyebrow)}
+  .hero h1{margin-top:11px; font:300 34px/1.05 Manrope,sans-serif; letter-spacing:-.02em; color:#FFFFFF}
 
-  .orgrow{padding:18px 26px 0; display:flex; align-items:center; justify-content:space-between; gap:12px}
-  .orgrow .lbl{font:500 10px/1 'DM Mono',monospace; letter-spacing:.2em; text-transform:uppercase; color:#9C98A8}
-  .orgrow img{display:block; height:34px; width:auto}
-
-  .rows{list-style:none; padding:14px 26px 0; display:flex; flex-direction:column}
-  .row{display:flex; align-items:center; gap:15px; padding:8px 0; min-height:58px; transition:opacity 160ms ease}
-  .row:hover{opacity:.7}
-  .ico{width:42px; height:42px; border-radius:50%; background:#413C7C; color:#FFFFFF; display:grid; place-items:center; flex:none}
-  .ico svg{width:19px; height:19px; stroke-width:1.7}
-  .txt{flex:1; min-width:0}
-  .v{display:block; font:500 16px/1.2 Manrope,sans-serif; color:#24212A; overflow-wrap:anywhere}
-  .v.small{font-size:14px}
-  .k{display:block; margin-top:3px; font:400 12px/1.2 Manrope,sans-serif; color:#9C98A8}
-
-  .foot{margin-top:auto; background:#24212A; padding:16px 22px calc(20px + env(safe-area-inset-bottom)); display:flex; gap:10px}
-  .btn{flex:1; height:56px; border:0; border-radius:28px; background:#413C7C; color:#FAF5EF; font:600 16px/1 Manrope,sans-serif; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; transition:filter 160ms ease}
-  .btn:hover{filter:brightness(.92)}
-  .share{width:56px; height:56px; border:1px solid #37333F; border-radius:28px; background:transparent; color:#FFFFFF; cursor:pointer; display:grid; place-items:center; transition:border-color 160ms ease}
-  .share:hover{border-color:#413C7C}
-  .toast{position:fixed; left:50%; bottom:calc(96px + env(safe-area-inset-bottom)); transform:translateX(-50%); background:#FAF5EF; color:#24212A; font:500 13px/1 Manrope,sans-serif; padding:10px 14px; border-radius:20px; box-shadow:0 8px 24px -8px rgba(36,33,42,.4); opacity:0; pointer-events:none; transition:opacity 160ms ease}
+  .body{flex:1; padding:4px 26px calc(22px + env(safe-area-inset-bottom)); display:flex; flex-direction:column; gap:12px}
+  .grid{margin:auto 0; display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  .tile{height:76px; border:1px solid var(--tile-border); border-radius:14px; background:var(--tile); color:var(--text); display:flex; flex-direction:column; justify-content:center; gap:9px; padding:0 16px; transition:border-color 160ms ease}
+  .tile:hover{border-color:var(--accent)}
+  .tile.wide{grid-column:1 / -1}
+  .tile svg{width:19px; height:19px; stroke-width:1.7}
+  .tile span{font:500 13px/1 Manrope,sans-serif}
+  .btn{height:56px; border:1px solid var(--save-border); border-radius:14px; background:transparent; color:var(--save-text); font:600 15px/1 Manrope,sans-serif; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:9px; transition:background 160ms ease}
+  .btn:hover{background:var(--save-hover)}
+  .btn svg{width:18px; height:18px}
+  .foot{margin-top:auto; padding-top:14px; border-top:1px solid var(--rule); display:flex; align-items:center; justify-content:space-between; gap:14px}
+  .foot img{display:block; height:60px; width:auto}
+  .share{width:46px; height:46px; border:1px solid var(--tile-border); border-radius:12px; background:transparent; color:var(--text); cursor:pointer; display:grid; place-items:center; transition:border-color 160ms ease}
+  .share:hover{border-color:var(--accent)}
+  .share svg{width:17px; height:17px}
+  .toast{position:fixed; left:50%; bottom:calc(96px + env(safe-area-inset-bottom)); transform:translateX(-50%); background:var(--text); color:var(--bg); font:500 13px/1 Manrope,sans-serif; padding:10px 14px; border-radius:20px; opacity:0; pointer-events:none; transition:opacity 160ms ease}
   .toast.on{opacity:1}
   @media (prefers-reduced-motion: reduce){ *{transition:none !important} }
 </style>
@@ -60,26 +57,26 @@
 <body>
 <main class="card">
   <div class="hero">
-    <img src="../assets/ailin-portrait.jpg" alt="Ailin Abigail Gava" width="920" height="1150">
+    <img class="portrait" src="../assets/ailin-portrait.jpg" alt="Ailin Abigail Gava" width="920" height="1150">
     <div class="shade"></div>
+    <img class="logo" src="../assets/dnr-white.png" alt="Diamond National Realty">
     <div class="cap">
       <span class="eyebrow">Systems, Process &amp; Training Manager</span>
       <h1>Ailin Abigail Gava</h1>
     </div>
   </div>
-  <div class="orgrow">
-    <span class="lbl">Diamond National Realty</span>
-    <img src="../assets/dnr-purple.png" alt="Diamond National Realty">
-  </div>
-  <ul class="rows">
-<li><a class="row" href="tel:+50762666094"><span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.6 3h3.2l1.6 4-2 1.4a12 12 0 0 0 6.2 6.2l1.4-2 4 1.6v3.2A2.6 2.6 0 0 1 18.4 20C10.5 19.6 4.4 13.5 4 5.6A2.6 2.6 0 0 1 6.6 3z"/></svg></span><span class="txt"><span class="v">+507 6266-6094</span><span class="k">Calls only</span></span></a></li>
-<li><a class="row" href="mailto:a.gava@dnrealtycorp.com"><span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></span><span class="txt"><span class="v">a.gava@dnrealtycorp.com</span><span class="k">Work</span></span></a></li>
-<li><a class="row" href="https://www.linkedin.com/in/ailin-gava-82642754/" target="_blank" rel="noopener"><span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></span><span class="txt"><span class="v">in/ailin-gava</span><span class="k">LinkedIn</span></span></a></li>
-<li><a class="row" href="https://diamondnationalrealty.com" target="_blank" rel="noopener"><span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20"/></svg></span><span class="txt"><span class="v">diamondnationalrealty.com</span><span class="k">Website</span></span></a></li>
-  </ul>
-  <div class="foot">
+  <div class="body">
+    <div class="grid">
+      <a class="tile" href="tel:+50762666094"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.6 3h3.2l1.6 4-2 1.4a12 12 0 0 0 6.2 6.2l1.4-2 4 1.6v3.2A2.6 2.6 0 0 1 18.4 20C10.5 19.6 4.4 13.5 4 5.6A2.6 2.6 0 0 1 6.6 3z"/></svg><span>Call</span></a>
+      <a class="tile" href="mailto:a.gava@dnrealtycorp.com"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><span>Email</span></a>
+      <a class="tile" href="https://www.linkedin.com/in/ailin-gava-82642754/" target="_blank" rel="noopener"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg><span>LinkedIn</span></a>
+      <a class="tile" href="https://diamondnationalrealty.com" target="_blank" rel="noopener"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20"/></svg><span>Website</span></a>
+    </div>
     <a class="btn" href="ailin-gava.vcf" download="ailin-gava.vcf"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg>Save contact</a>
-    <button class="share" id="share" type="button" aria-label="Share card"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4"/><path d="M15.4 6.5l-6.8 4"/></svg></button>
+    <div class="foot">
+      <img src="../assets/dnr-white.png" alt="Diamond National Realty">
+      <button class="share" id="share" type="button" aria-label="Share card"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4"/><path d="M15.4 6.5l-6.8 4"/></svg></button>
+    </div>
   </div>
   <div class="toast" id="scan" role="status"></div>
 </main>
