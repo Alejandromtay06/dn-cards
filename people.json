@@ -20,18 +20,18 @@
     },
     {
       "slug": "jennifer-levant",
-      "brand": "crystal",
+      "brand": "dnr",
       "first": "Jennifer",
       "last": "Levant",
       "title": "Director of Operations",
-      "org": "Crystal",
-      "org_parent": "Diamond National Realty",
+      "org": "Diamond National Realty",
+      "org_parent": null,
       "tagline": null,
       "email": "jlevant@dnrealtycorp.com",
       "phone_display": null,
       "phone_e164": null,
       "phone_label": null,
-      "website": null,
+      "website": "diamondnationalrealty.com",
       "address": {
         "street": "5180 Roswell Rd NE, Suite 203",
         "city": "Atlanta",
@@ -40,7 +40,11 @@
         "country": "USA"
       },
       "whatsapp": false,
-      "linkedin": null
+      "linkedin": "jennifer-levant-0338a47b",
+      "linkedin_display": "in/jennifer-levant",
+      "hide_address": true,
+      "hero": "assets/jennifer-portrait.jpg",
+      "hero_position": "50% 14%"
     },
     {
       "slug": "ailin-gava",
