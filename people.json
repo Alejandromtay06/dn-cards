@@ -77,6 +77,29 @@
       "hero": "assets/ailin-portrait.jpg",
       "hero_position": "50% 18%",
       "hide_address": true
+    },
+    {
+      "slug": "max-new",
+      "brand": "dni",
+      "first": "Max",
+      "last": "New",
+      "title": "Chief Operating Officer",
+      "org": "Diamond National Investments",
+      "org_parent": null,
+      "tagline": null,
+      "email": "max@dnrealtycorp.com",
+      "phone_display": null,
+      "phone_e164": null,
+      "phone_label": null,
+      "website": "dn-investments.com",
+      "address": null,
+      "whatsapp": false,
+      "wa_text": null,
+      "linkedin": "max-new-ba0892205",
+      "linkedin_display": "in/max-new",
+      "hide_address": true,
+      "hero": "assets/max-portrait.jpg",
+      "hero_position": "50% 18%"
     }
   ]
 }
