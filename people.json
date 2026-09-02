@@ -56,9 +56,9 @@
       "org_parent": null,
       "tagline": null,
       "email": "a.gava@dnrealtycorp.com",
-      "phone_display": "+1 404-595-3901",
-      "phone_e164": "+14045953901",
-      "phone_label": "Cell",
+      "phone_display": "+507 6266-6094",
+      "phone_e164": "+50762666094",
+      "phone_label": "Calls only",
       "website": "diamondnationalrealty.com",
       "address": {
         "street": "5180 Roswell Rd NE, Suite 203",
@@ -67,10 +67,10 @@
         "zip": "30342",
         "country": "USA"
       },
-      "whatsapp": true,
+      "whatsapp": false,
       "linkedin": "ailin-gava-82642754",
       "linkedin_display": "in/ailin-gava",
-      "wa_text": "Hi Ailin, I got your card",
+      "wa_text": null,
       "hero": "assets/ailin-portrait.jpg",
       "hero_position": "50% 14%",
       "hide_address": true
